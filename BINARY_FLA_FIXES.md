@@ -182,3 +182,35 @@ All 914 tests pass. Tests that encoded the old, disproven layouts were updated, 
 - **Sound sync mode, in/out points and loops** in binary frames aren't decoded.
 - **Frame labels, shape tweens and per-target / custom eases** in binary files aren't decoded.
 - Several layouts (§6, §9, §11, §12) were confirmed on one real CS4 file. Test them on more real files before relying on them.
+
+## Next: sound sync, then mask layers
+
+Neither is documented in the fla-decoder reference. Its notes only confirm that the frame's sound reference is a `u16` and that an unconditional `layer_mode` byte exists, with no meanings for either. The current file has one sound and no masks, so decoding these would be guesswork. They will be decoded the same way as the fixes above: by comparing bytes in small test files whose settings are known.
+
+Test files still to be made, in Flash CS4, saved as CS4 documents (not CS5/XFL), with each layer named after its setting:
+
+**`sound-sync.fla`**: one short sound; each layer has a keyframe on frame 1 using it.
+
+| Layer name | Sync | Repeat/Loop |
+|---|---|---|
+| `event` | Event | Repeat 1 |
+| `start` | Start | Repeat 1 |
+| `stop` | Stop | Repeat 1 |
+| `stream` | Stream | Repeat 1 |
+| `repeat3` | Event | Repeat 3 |
+| `loop` | Event | Loop |
+| `trimmed` (optional) | Event, with start/end markers moved via **Edit…** | Repeat 1 |
+
+Likely candidates: the unread `fs > 5` entry table and the `fs > 6` fields in `consumeCPicFrame` (`binary-timeline-decoder.ts`).
+
+**`masks.fla`**, layers top to bottom, plus a stage screenshot for comparison:
+
+| Layer name | Layer type | Content |
+|---|---|---|
+| `mask` | Mask | a circle |
+| `masked` | Masked (under `mask`) | a large coloured rectangle |
+| `guide` | Guide | any shape |
+| `normal` | Normal | any shape |
+| `folder` | Folder | contains `normal`, if CS4 allows |
+
+Likely candidates: the `layer_mode` byte and the parent `ReadObject` after it in the layer tail. The walker currently throws on a non-null parent, which would reject a masked layer's timeline.

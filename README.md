@@ -26,6 +26,8 @@ Old **binary FLA files** (Flash CS4 and earlier) opened as a **blank white stage
 
 **Still not supported in binary files:** mask layers, frame labels, and the sound sync mode (it is assumed to be "event").
 
+**Next:** sound sync (event/start/stop/stream, loops, trimming), then mask layers. Both are waiting on small Flash CS4 test files; the recipe is in [BINARY_FLA_FIXES.md](BINARY_FLA_FIXES.md#next-sound-sync-then-mask-layers).
+
 Technical details, including the byte-level evidence for each fix: **[BINARY_FLA_FIXES.md](BINARY_FLA_FIXES.md)**.
 
 ## Run locally
