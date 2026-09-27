@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import { playwright } from '@vitest/browser-playwright';
 
 export default defineConfig({
-  base: process.env.GITHUB_ACTIONS ? '/fla-viewer/' : '/',
+  // GitHub Pages serves the site under /<repo name>/ (this fork: fla-viewer-fix).
+  base: process.env.GITHUB_ACTIONS ? '/fla-viewer-fix/' : '/',
   server: {
     port: 3000,
   },
