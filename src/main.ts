@@ -327,6 +327,33 @@ export class FLAViewerApp {
     this.panLeftBtn?.addEventListener('click', () => this.player?.pan(PAN_STEP, 0));
     this.panRightBtn?.addEventListener('click', () => this.player?.pan(-PAN_STEP, 0));
 
+    // Collapsible mobile zoom/pan panel (it covers the stage on phones).
+    // The choice is remembered per device; storage may be unavailable
+    // (private mode), in which case the panel just starts expanded.
+    const mobileControls = document.getElementById('mobile-controls');
+    const mobileToggle = document.getElementById('mobile-controls-toggle');
+    const setControlsCollapsed = (collapsed: boolean) => {
+      mobileControls?.classList.toggle('collapsed', collapsed);
+      mobileToggle?.setAttribute('aria-expanded', String(!collapsed));
+      const label = collapsed ? 'Show zoom and pan controls' : 'Hide zoom and pan controls';
+      mobileToggle?.setAttribute('aria-label', label);
+      mobileToggle?.setAttribute('title', label);
+    };
+    try {
+      setControlsCollapsed(localStorage.getItem('mobileControlsCollapsed') === '1');
+    } catch {
+      // Storage blocked: keep the default (expanded).
+    }
+    mobileToggle?.addEventListener('click', () => {
+      const collapsed = !mobileControls?.classList.contains('collapsed');
+      setControlsCollapsed(collapsed);
+      try {
+        localStorage.setItem('mobileControlsCollapsed', collapsed ? '1' : '0');
+      } catch {
+        // Storage blocked: the choice lasts until reload.
+      }
+    });
+
     // Timeline scrubbing (uses global frames to seek across scenes). Pointer
     // events so the playhead follows a drag, not just a click; playback pauses
     // while dragging (seeking a playing timeline restarts the audio on every

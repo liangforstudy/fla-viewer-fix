@@ -8,7 +8,7 @@ These changes fix pre-CS5 **binary FLA** files (OLE2 / MS Compound File containe
 
 **Sections 1–12** are binary-format fixes. Each was verified by rendering frames with `scripts/render-binary-fla.mjs` (headless Chromium through Playwright) and comparing them with the exported movie. A final check loaded the file through the real viewer UI and played it.
 
-**Sections 13–19** are player fixes that apply to **all** FLA files, including CS5+ and Animate. They were verified by driving the real viewer UI with Playwright.
+**Sections 13–20** are player and UI changes that apply to **all** FLA files, including CS5+ and Animate. They were verified by driving the real viewer UI with Playwright.
 
 ---
 
@@ -212,7 +212,13 @@ Each load created a new `FLAPlayer` without stopping the previous one. The old p
 
 Safari zooms the page on a quick double tap, which fast taps on Play/Pause triggered. `html { touch-action: manipulation; }` disables double-tap zoom but keeps pinch zoom; `touch-action` combines down the tree, so it covers every element, and the canvas keeps its own `none` for panning.
 
-## 19. Sample button loads the Flash 8 demo
+## 19. Collapsible mobile zoom/pan panel (all FLA files)
+
+*Files: `index.html`, `main.ts`*
+
+On phones the fixed zoom/pan panel covered part of the stage and couldn't be hidden. A toggle button at the bottom of the panel collapses it to just that button. The panel is anchored by its bottom edge, so the toggle stays in place (±1 px). The state is stored in `localStorage` (`mobileControlsCollapsed`), with storage errors ignored, and `aria-expanded`/labels are updated.
+
+## 20. Sample button loads the Flash 8 demo
 
 *Files: `main.ts`, `public/flash8-demo.fla`, `vite-asset.d.ts`*
 

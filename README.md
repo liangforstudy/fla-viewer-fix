@@ -54,6 +54,7 @@ Have a real CS3/CS4 (or Flash 5/MX) `.fla`? It's the best way to confirm support
 - **Timeline scrubbing:** the timeline only responded to a click on a 4px bar. It now follows a drag, has a larger grab area, and pauses playback while dragging.
 - **Duplicate audio:** loading a second file (or the sample again) left the old player running, so two soundtracks played at once and pausing only stopped one.
 - **iOS double-tap zoom:** quick taps (e.g. on Play/Pause) zoomed the page on iPhone. Pinch-to-zoom still works.
+- **Mobile zoom/pan panel covered the stage:** it can now be collapsed to a single button (remembered per device).
 - **Resetting the view:** double-click the canvas (or press `0`) to reset pan and zoom.
 
 ### Not yet supported
