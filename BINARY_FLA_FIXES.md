@@ -8,7 +8,7 @@ These changes fix pre-CS5 **binary FLA** files (OLE2 / MS Compound File containe
 
 **Sections 1–12** are binary-format fixes. Each was verified by rendering frames with `scripts/render-binary-fla.mjs` (headless Chromium through Playwright) and comparing them with the exported movie. A final check loaded the file through the real viewer UI and played it.
 
-**Sections 13–16** are player fixes that apply to **all** FLA files, including CS5+ and Animate. They were verified by driving the real viewer UI with Playwright.
+**Sections 13–19** are player fixes that apply to **all** FLA files, including CS5+ and Animate. They were verified by driving the real viewer UI with Playwright.
 
 ---
 
@@ -195,6 +195,28 @@ The timeline only had a `click` listener on a 4 px-tall bar, so dragging did not
 *File: `main.ts`*
 
 Pan and zoom could already be reset with the `0` key, but the Reset View button only exists in the mobile controls. A `dblclick` on the canvas now calls `player.resetView()`. Single clicks on the canvas are only used by debug mode, so nothing conflicts.
+
+## 17. Duplicate audio after loading another file (all FLA files)
+
+*Files: `player.ts` (`destroy`), `main.ts`*
+
+Each load created a new `FLAPlayer` without stopping the previous one. The old player's animation loop and sound kept running, so a second load (or loading the sample again) played two soundtracks, and pausing only affected the new player. Reported on iPhone.
+
+**Change:** `FLAPlayer.destroy()` pauses, detaches the state callback and closes the player's `AudioContext`; `loadFile` calls it before creating the new player.
+
+**Verified:** Playwright, iPhone 13 emulation. After re-loading while playing, exactly one audio source is live, the old context is closed, and one tap on pause silences it.
+
+## 18. iOS double-tap zoom (all FLA files)
+
+*File: `index.html`*
+
+Safari zooms the page on a quick double tap, which fast taps on Play/Pause triggered. `html { touch-action: manipulation; }` disables double-tap zoom but keeps pinch zoom; `touch-action` combines down the tree, so it covers every element, and the canvas keeps its own `none` for panning.
+
+## 19. Sample button loads the Flash 8 demo
+
+*Files: `main.ts`, `public/flash8-demo.fla`, `vite-asset.d.ts`*
+
+**Sample** now fetches `public/flash8-demo.fla` (the reference Flash 8 project) from `import.meta.env.BASE_URL`, so it works both locally and under `/fla-viewer-fix/` on GitHub Pages. If the fetch fails, it falls back to upstream's generated XFL sample (`sample-generator.ts`, kept). `vite-asset.d.ts` declares `import.meta.env.BASE_URL`, since the project doesn't include Vite's client types.
 
 ---
 

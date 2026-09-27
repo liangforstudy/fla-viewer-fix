@@ -261,7 +261,18 @@ export class FLAViewerApp {
     this.loadSampleBtn.addEventListener('click', async (e) => {
       e.preventDefault(); // Don't trigger the surrounding label's file picker
       e.stopPropagation();
-      const sampleFile = await generateSampleFLA();
+      // This fork's sample is a real Flash 8 binary FLA (served from public/),
+      // demoing the binary-format fixes. The generated XFL sample remains
+      // available as a fallback if the fetch fails.
+      let sampleFile: File;
+      try {
+        const res = await fetch(`${import.meta.env.BASE_URL}flash8-demo.fla`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        sampleFile = new File([await res.blob()], 'flash8-demo.fla');
+      } catch (err) {
+        console.warn('Flash 8 sample unavailable, using generated sample:', err);
+        sampleFile = await generateSampleFLA();
+      }
       this.loadFile(sampleFile);
     });
 
@@ -1053,6 +1064,9 @@ export class FLAViewerApp {
       // Create player and wait for fonts to load
       this.loadingText.textContent = 'Loading fonts...';
       this.updateLoadingStage('Loading fonts...');
+      // Stop the previous file's player; otherwise its loop and sound keep
+      // running under the new one (two soundtracks at once).
+      this.player?.destroy();
       this.player = new FLAPlayer(this.canvas);
       await this.player.setDocument(doc);
       this.player.onStateUpdate((state) => this.updateUI(state));

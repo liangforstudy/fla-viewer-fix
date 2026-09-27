@@ -170,6 +170,13 @@
       padding: 0;
     }
 
+    /* Disable iOS double-tap-to-zoom (fast taps on Play/Pause zoomed the page)
+       while keeping pinch zoom. touch-action combines down the tree, so this
+       covers every element; the canvas keeps its own "none" for panning. */
+    html {
+      touch-action: manipulation;
+    }
+
     body {
       font-family: var(--font-ui);
       background: var(--bg-primary);

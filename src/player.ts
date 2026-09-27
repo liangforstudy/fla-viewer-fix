@@ -156,6 +156,20 @@ export class FLAPlayer {
     this.notifyStateChange();
   }
 
+  /**
+   * Stop playback for good and release audio. Call before replacing this
+   * player: an abandoned player kept its animation loop and sound running, so
+   * loading a second file played two soundtracks at once.
+   */
+  destroy(): void {
+    this.onStateChange = null;
+    this.pause();
+    this.gainNode?.disconnect();
+    void this.audioContext?.close();
+    this.audioContext = null;
+    this.gainNode = null;
+  }
+
   stop(): void {
     this.pause();
     this.state.currentFrame = 0;

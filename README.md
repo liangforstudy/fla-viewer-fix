@@ -14,6 +14,8 @@ A fork of [lifeart/fla-viewer](https://github.com/lifeart/fla-viewer), a browser
 
 This fork completes and corrects that parser. Every change was checked against a **real Flash 8 project and the video Flash exported from it**, until playback matched frame for frame, with sound. The byte-level evidence for each fix is in [BINARY_FLA_FIXES.md](BINARY_FLA_FIXES.md). A few player bugs affecting **all** FLA files were fixed along the way.
 
+**Try it:** click **Sample** on the [live demo](https://liangforstudy.github.io/fla-viewer-fix/) to load the Flash 8 project used to verify these fixes.
+
 ### Which Flash versions are covered?
 
 FLA files come in two formats, and the viewer picks a parser from the file's first bytes. CS5+ files go to upstream's main XFL parser, which already worked; its XFL code wasn't changed.
@@ -50,6 +52,8 @@ Have a real CS3/CS4 (or Flash 5/MX) `.fla`? It's the best way to confirm support
 - **Silent "event" sounds:** the player and the video exporter only played "stream" sounds. They now also play "event" sounds (Flash's default).
 - **Play/Pause button:** clicks on the icon were often ignored during playback, because the icon was redrawn every frame; only the button's edges worked.
 - **Timeline scrubbing:** the timeline only responded to a click on a 4px bar. It now follows a drag, has a larger grab area, and pauses playback while dragging.
+- **Duplicate audio:** loading a second file (or the sample again) left the old player running, so two soundtracks played at once and pausing only stopped one.
+- **iOS double-tap zoom:** quick taps (e.g. on Play/Pause) zoomed the page on iPhone. Pinch-to-zoom still works.
 - **Resetting the view:** double-click the canvas (or press `0`) to reset pan and zoom.
 
 ### Not yet supported

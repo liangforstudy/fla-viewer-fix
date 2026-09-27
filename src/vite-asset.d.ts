@@ -12,6 +12,14 @@ declare module '*.fla.gz?url' {
   export default url;
 }
 
+// Vite's public base path ("/" locally, "/fla-viewer-fix/" on GitHub Pages).
+interface ImportMetaEnv {
+  readonly BASE_URL: string;
+}
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 // MP3 fixture (e.g. a real sound stream used to test audio decoding).
 declare module '*.mp3?url' {
   const url: string;
