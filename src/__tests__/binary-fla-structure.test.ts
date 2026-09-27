@@ -66,7 +66,7 @@ describe('extractLayers (binary FLA layer enumeration)', () => {
   it('classifies guide / folder layers by name prefix, not the current flag', () => {
     const stream = concat(
       // byte 0 = 1 is the CURRENT-layer flag (every single-layer symbol in a
-      // real CS4 file has it); it must not make the layer a guide.
+      // real Flash 8 file has it); it must not make the layer a guide.
       layerRecord('Layer 2', 11, 1, 0, 0),
       layerRecord('Guide: Layer 8', 11, 0, 0, 0),
       layerRecord('Folder 1', 11, 0, 0, 0)

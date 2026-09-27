@@ -623,6 +623,20 @@
       height: 6px;
     }
 
+    /* Invisible 20px-tall hit area so the 4px bar is easy to grab and drag. */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -8px;
+      bottom: -8px;
+    }
+
+    .timeline.scrubbing .timeline-progress::after {
+      opacity: 1;
+    }
+
     .timeline-progress {
       height: 100%;
       background: var(--accent);

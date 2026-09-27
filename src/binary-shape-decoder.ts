@@ -62,7 +62,7 @@ export const ULTRA_TWIPS_PER_PX = 2560;
 /**
  * Edge-stream units per pixel for a CPicShape. Flash 8+ records
  * (`shape_schema > 2`, the same gate as stroke caps) store edges at twice the
- * precision: 5120 units/px. Verified on a real CS4 file whose shapes only
+ * precision: 5120 units/px. Verified on a real Flash 8 file whose shapes only
  * match the exported movie's size and position at 5120 (at 2560 every shape
  * rendered 2× too large, off-stage). Older records (`shape_schema` <= 2, e.g.
  * the MX 2004 btnstrob fixture) keep 2560.
@@ -292,7 +292,7 @@ function readFillStyle(
     }
     // shape_data_schema >= 5 (Flash 8+) adds 5 more bytes before the stops —
     // presumably focal point / spread / interpolation, all zero in the one
-    // real sample (a CS4 red→yellow linear gradient). Not reading them
+    // real sample (a Flash 8 red→yellow linear gradient). Not reading them
     // misaligned the stops and lost the whole shape.
     if (shapeDataSchema >= 5) r.bytes(5);
     const gradient = [];
@@ -471,7 +471,7 @@ export function readEdgeStream(r: ByteReader): RawEdge[] {
       // fill0/fill1/line lost one fill of every two-fill shape and invented
       // strokes on shapes that have none: the first index is 0 in every
       // stroke-less shape and 1 in a real MX 2004 file's 1-fill/1-stroke
-      // shape. The fill sides were confirmed by matching a real CS4 file's
+      // shape. The fill sides were confirmed by matching a real Flash 8 file's
       // render against its exported movie.
       if (flags & 0x80) {
         line = r.u8();

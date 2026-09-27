@@ -10,9 +10,31 @@ A fork of [lifeart/fla-viewer](https://github.com/lifeart/fla-viewer), a browser
 
 ## What this fork changes
 
-Old **binary FLA files** (Flash CS4 and earlier) opened as a **blank white stage with no sound**. They now play with their artwork, animation and audio.
+[Upstream's support](https://github.com/lifeart/fla-viewer) for old **binary FLA files** (Flash 5 to CS4) was an **incomplete, work-in-progress parser**. It was built from a partly reverse-engineered description of the format and mostly synthetic test files, so several byte layouts were guessed wrong, and sound and tweens were never read. With a real Flash 8 file, the result was a blank white stage with no sound.
 
-**Fixed**
+This fork completes and corrects that parser. Every change was checked against a **real Flash 8 project and the video Flash exported from it**, until playback matched frame for frame, with sound. The byte-level evidence for each fix is in [BINARY_FLA_FIXES.md](BINARY_FLA_FIXES.md). A few player bugs affecting **all** FLA files were fixed along the way.
+
+### Which Flash versions are covered?
+
+FLA files come in two formats, and the viewer picks a parser from the file's first bytes. CS5+ files go to upstream's main XFL parser, which already worked; its XFL code wasn't changed.
+
+| Saved by | Format | Parser |
+|---|---|---|
+| Flash 5 → Flash 8 → CS3 → CS4 | Binary | `binary-fla-parser.ts` (fixed here) |
+| CS5 and later, Adobe Animate | ZIP + XML (XFL) | `fla-parser.ts` (upstream, unchanged) |
+
+Within the binary range:
+
+| Version | Status | Notes |
+|---|---|---|
+| Flash 8 | ✅ Tested | Real project, matched frame-for-frame against its exported video, with sound |
+| Flash MX 2004 (7) | ✅ Tested | Real sample file renders correctly |
+| CS3, CS4 | ❔ Likely, untested | Same format family, but may use newer record layouts; no sample file yet |
+| Flash 5, MX (6) | ⚠️ Partial | Artwork should mostly work; animation may collapse to a single still frame (the timeline reader only accepts the Flash 7/8 layer layout) |
+
+Have a real CS3/CS4 (or Flash 5/MX) `.fla`? It's the best way to confirm support. Please share one.
+
+### Fixed: binary FLA files
 
 - **White screen:** layers were misread as hidden guide layers, and every placed symbol pointed at the first library item.
 - **Wrong size and position:** Flash 8+ shapes were drawn 2× too large, and the stage size came from a stale publish setting.
@@ -22,11 +44,19 @@ Old **binary FLA files** (Flash CS4 and earlier) opened as a **blank white stage
 - **Stray fill shapes:** thin details such as outlines were joined into large incorrect shapes.
 - **No explosion/transition animation:** motion tweens are now read.
 - **No audio:** sounds in binary files are now loaded (PCM and MP3).
-- **Silent "event" sounds:** the player and the video exporter only played "stream" sounds. They now also play "event" sounds (Flash's default), in all FLA files.
 
-**Still not supported in binary files:** mask layers, frame labels, and the sound sync mode (it is assumed to be "event").
+### Fixed: player (all FLA files, including CS5+ and Animate)
 
-**Next:** sound sync (event/start/stop/stream, loops, trimming), then mask layers. Both are waiting on small Flash CS4 test files; the recipe is in [BINARY_FLA_FIXES.md](BINARY_FLA_FIXES.md#next-sound-sync-then-mask-layers).
+- **Silent "event" sounds:** the player and the video exporter only played "stream" sounds. They now also play "event" sounds (Flash's default).
+- **Play/Pause button:** clicks on the icon were often ignored during playback, because the icon was redrawn every frame; only the button's edges worked.
+- **Timeline scrubbing:** the timeline only responded to a click on a 4px bar. It now follows a drag, has a larger grab area, and pauses playback while dragging.
+- **Resetting the view:** double-click the canvas (or press `0`) to reset pan and zoom.
+
+### Not yet supported
+
+**In binary files:** mask layers, frame labels, and the sound sync mode (it is assumed to be "event").
+
+**Next:** sound sync (event/start/stop/stream, loops, trimming), then mask layers. Both are waiting on small Flash 8 (or other pre-CS5) test files; the recipe is in [BINARY_FLA_FIXES.md](BINARY_FLA_FIXES.md#next-sound-sync-then-mask-layers).
 
 Technical details, including the byte-level evidence for each fix: **[BINARY_FLA_FIXES.md](BINARY_FLA_FIXES.md)**.
 

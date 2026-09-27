@@ -80,7 +80,7 @@ export interface DecodedKeyframe {
   bodyEnd: number;
   /**
    * 1-based sound this keyframe starts (0 = none): N refers to the `Media N`
-   * stream's CMediaSound. Seen on a real CS4 file's sound-only layer.
+   * stream's CMediaSound. Seen on a real Flash 8 file's sound-only layer.
    */
   soundRef?: number;
   /** Classic motion tween from this keyframe to the next. */
@@ -248,7 +248,7 @@ function consumeCPicFrame(r: ByteReader, ar: ArchiveReader): FrameParse {
 
   const fs = r.u8(); // frame_schema
   const field18c = r.u16(); // SPAN (Flash keyframe duration)
-  // field_188: bit 0 = classic MOTION tween to the next keyframe. In a real CS4
+  // field_188: bit 0 = classic MOTION tween to the next keyframe. In a real Flash 8
   // file exactly the keyframes that start a tween (the explosion's tiny →
   // full-size scale-ups) have 0x1E01; static keyframes have 0x0600.
   const field188 = fs > 2 ? r.u16() : r.u8();
@@ -555,7 +555,7 @@ function consumeCPicLayer(
   // would mis-read nested sprite frames as extra top-level layers.
   // Skipped when the tail parsed cleanly and the NEXT object is another
   // CPicLayer: jumping to the last sentinel there dropped every layer after
-  // the first (a real CS4 scene lost 2 of its 3 layers).
+  // the first (a real Flash 8 scene lost 2 of its 3 layers).
   if (ar.peekBackrefName() === 'CPicLayer') {
     return { name, schema: layerSchema, locked, visible, keyframes };
   }

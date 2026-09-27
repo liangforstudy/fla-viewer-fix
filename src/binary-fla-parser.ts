@@ -304,7 +304,7 @@ const SOUND_RATES = [5512, 11025, 22050, 44100];
  * name (`FF FE FF <len> <UTF-16>`), and ends with a footer
  * `00 0A <format> 00 <u32 sampleCount>`. The format byte is laid out like the
  * SWF sound header: bit 0 stereo, bit 1 16-bit, bits 2-3 rate index (a real
- * CS4 file's 0x0E = 44.1 kHz 16-bit mono; its Media stream is exactly
+ * Flash 8 file's 0x0E = 44.1 kHz 16-bit mono; its Media stream is exactly
  * sampleCount × 2 bytes). A record is only accepted when its stream holds MP3
  * (sniffed) or exactly the PCM byte count the footer declares — other codecs
  * (ADPCM, Nellymoser) are reported and skipped, never guessed at.
@@ -384,7 +384,7 @@ function extractSounds(
 /**
  * The stage rectangle (4×s32 twips: left, right, top, bottom) sits this many
  * bytes before the background-color record. Observed identically in a real
- * MX 2004 file (600×300) and a real CS4 file (720×480); in both the HTML
+ * MX 2004 file (600×300) and a real Flash 8 file (720×480); in both the HTML
  * publish-setting Width/Height strings were stale (550×400), so this rect is
  * the authoritative stage size.
  */
@@ -848,7 +848,7 @@ function buildAttributedLayers(
 
 /**
  * Binary FLAs store a timeline's layers BOTTOM-first; the viewer (like XFL)
- * expects TOP-first (layers[0] drawn last). Verified on a real CS4 file: its
+ * expects TOP-first (layers[0] drawn last). Verified on a real Flash 8 file: its
  * first-stored layer holds a table that the exported movie draws BEHIND the
  * food on the second layer.
  */
